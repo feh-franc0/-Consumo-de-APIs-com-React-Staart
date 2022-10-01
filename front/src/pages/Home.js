@@ -9,8 +9,10 @@ export default function Home() {
   const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
-    fetch('http://localhost:3001/posts')
-      .then(async(response) => {
+    async function loadPosts() {
+      try {
+        const response = await fetch('http://localhost:3001/posts');
+
         if(!response.ok) {
           setHasError(true);
           return;
@@ -22,13 +24,14 @@ export default function Home() {
           ...post,
           publishedAt: new Date(post.publishedAt)
         })));
-      })
-      .catch((error) => {
+      } catch (error) {
         setHasError(true);
-      })
-      .finally(() => {
+      } finally {
         setIsLoading(false);
-      });
+      }
+    }
+
+    loadPosts();
   }, []);
 
   function handleSubmit({ history, userName }) {

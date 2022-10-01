@@ -8,26 +8,29 @@ export default function MostViewed() {
   const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
-    fetch('http://localhost:3001/posts/most-viewed')
-      .then(async(response) => {
+    async function loadPosts() {
+      try {
+        const response = await fetch('http://localhost:3001/posts/most-viewed');
+
         if(!response.ok) {
           setHasError(true);
           return;
         }
-
+        
         const body = await response.json()
 
         setPosts(body.map((post) => ({
           ...post,
           publishedAt: new Date(post.publishedAt)
         })));
-      })
-      .catch((error) => {
+      } catch (error) {
         setHasError(true);
-      })
-      .finally(() => {
+      } finally {
         setIsLoading(false);
-      });
+      }
+    }
+
+    loadPosts();
   }, []);
 
   return (
